@@ -23,7 +23,7 @@ pub struct EntryData {
   pub options: EntryOptions,
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct EntryOptions {
   pub runtime: Option<String>,
   pub chunk_loading: Option<ChunkLoading>,

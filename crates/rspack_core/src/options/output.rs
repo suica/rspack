@@ -1,4 +1,5 @@
 use std::{
+  fmt,
   path::{Path, PathBuf},
   str::FromStr,
   string::ParseError,
@@ -250,38 +251,53 @@ impl<'a> PathData<'a> {
   }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Filename {
-  template: String,
+pub struct Haha(Box<dyn Fn(String, String) -> String + Send + Sync>);
+
+pub struct FilenameTemplateFunc(Box<dyn Fn(String, String) -> String + Send + Sync>);
+
+#[derive(PartialEq, Clone)]
+pub enum Filename {
+  String(String),
+  Func(FilenameTemplateFunc),
+}
+
+impl fmt::Debug for Filename {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    match self {
+      Self::String(i) => i.fmt(f),
+      Self::Func(_) => "Func(...)".fmt(f),
+    }
+  }
 }
 
 impl FromStr for Filename {
   type Err = ParseError;
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
-    Ok(Self {
-      template: s.to_string(),
-    })
+    Ok(Self::String(s.into()))
   }
 }
 
 impl From<String> for Filename {
   fn from(value: String) -> Self {
-    Self { template: value }
+    Self::String(value)
   }
 }
 
 impl Filename {
   pub fn template(&self) -> &str {
-    &self.template
+    match self {
+      Filename::String(value) => value,
+      Filename::Func(_) => todo!(),
+    }
   }
 
   pub fn has_hash_placeholder(&self) -> bool {
-    HASH_PLACEHOLDER.is_match(&self.template) || FULL_HASH_PLACEHOLDER.is_match(&self.template)
+    HASH_PLACEHOLDER.is_match(&self.template()) || FULL_HASH_PLACEHOLDER.is_match(&self.template())
   }
 
   pub fn render(&self, options: PathData, mut asset_info: Option<&mut AssetInfo>) -> String {
-    let mut template = self.template.clone();
+    let mut template = self.template().to_string();
     if let Some(filename) = options.filename {
       if let Some(caps) = DATA_URI_REGEX.captures(filename) {
         let ext = mime_guess::get_mime_extensions_str(
