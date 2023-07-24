@@ -202,7 +202,13 @@ function getRawOutput(output: OutputNormalized): RawOptions["output"] {
 		publicPath: output.publicPath!,
 		clean: output.clean!,
 		assetModuleFilename: output.assetModuleFilename!,
-		filename: output.filename!,
+		filename:
+			typeof output.filename! === "function"
+				? {
+						type: "function",
+						funcFileName: output.filename
+				  }
+				: { type: "string", stringFileName: output.filename },
 		chunkFormat: output.chunkFormat === false ? "false" : output.chunkFormat!,
 		chunkFilename: output.chunkFilename!,
 		chunkLoading: chunkLoading === false ? "false" : chunkLoading,

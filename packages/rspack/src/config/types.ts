@@ -155,7 +155,7 @@ export type PublicPath = "auto" | RawPublicPath;
 export type RawPublicPath = string;
 export type AssetModuleFilename = string;
 export type WebassemblyModuleFilename = string;
-export type Filename = FilenameTemplate;
+export type Filename = FilenameTemplate | FilenameTemplateProducer;
 export type ChunkFilename = FilenameTemplate;
 export type CrossOriginLoading = false | "anonymous" | "use-credentials";
 export type CssFilename = FilenameTemplate;
@@ -163,6 +163,10 @@ export type CssChunkFilename = FilenameTemplate;
 export type HotUpdateChunkFilename = FilenameTemplate;
 export type HotUpdateMainFilename = FilenameTemplate;
 export type FilenameTemplate = string;
+export type FilenameTemplateProducer = (
+	pathData: unknown,
+	assetInfo: unknown
+) => FilenameTemplate;
 export type UniqueName = string;
 export type ChunkLoadingGlobal = string;
 export type Library = LibraryName | LibraryOptions;

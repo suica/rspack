@@ -801,7 +801,7 @@ export interface RawOutputOptions {
   wasmLoading: string
   enabledWasmLoadingTypes: Array<string>
   webassemblyModuleFilename: string
-  filename: string
+  filename: RawOutputFileNameConfig
   chunkFilename: string
   crossOriginLoading: RawCrossOriginLoading
   cssFilename: string
@@ -974,6 +974,12 @@ export interface RawStyleConfig {
 
 export interface RawTrustedTypes {
   policyName?: string
+}
+
+export interface RawOutputFileNameConfig {
+  type: "string" | "function"
+  stringFileName?: string
+  funcFileName?: (...args: any[]) => any
 }
 
 export interface ThreadsafeNodeFS {
